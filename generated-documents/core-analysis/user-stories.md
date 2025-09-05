@@ -162,4 +162,188 @@ Certainly! Below are detailed user stories for the Adaptive Learning System proj
 
 ---
 
-If you would like user stories for additional features or focused on specific roles (e.g., developers, admins), please let me know!
+### User Story 11: Mobile-Optimized Learning Experience
+
+**As a** learner using mobile devices,  
+**I want** the system to provide an optimized mobile experience with offline capabilities  
+**so that** I can learn effectively on smartphones and tablets, even with limited connectivity.
+
+**Acceptance Criteria:**
+- System provides responsive design optimized for mobile devices.
+- Learner can download content for offline study during connectivity issues.
+- Mobile interface supports touch-friendly interactions and gestures.
+- System synchronizes progress when connectivity is restored.
+- Offline mode maintains core learning functionality without internet access.
+
+---
+
+### User Story 12: Goal Setting and Milestone Tracking
+
+**As a** learner,  
+**I want** to set personal learning goals and track my progress toward specific milestones  
+**so that** I can stay motivated and measure my advancement toward my objectives.
+
+**Acceptance Criteria:**
+- Learner can set SMART goals with specific competencies and timelines.
+- System tracks progress toward goals and provides regular updates.
+- Learner receives notifications when milestones are achieved.
+- System suggests realistic goals based on current competency levels.
+- Goals can be modified or updated as learning progresses.
+
+---
+
+### User Story 13: Content Creation and Management
+
+**As an** educator,  
+**I want** to create, modify, and manage learning content and assessments  
+**so that** I can customize the learning experience for my students' specific needs.
+
+**Acceptance Criteria:**
+- Educator can create new learning activities and coding challenges.
+- System allows setting competency mappings and difficulty levels for content.
+- Educator can organize content into courses, modules, and lessons.
+- Content creation interface supports multiple formats (text, interactive, multimedia).
+- Changes to content are versioned and can be rolled back if needed.
+
+---
+
+### User Story 14: Community Features and Peer Learning
+
+**As a** learner,  
+**I want** to connect with other learners and participate in community discussions  
+**so that** I can get help, share knowledge, and stay motivated through peer interaction.
+
+**Acceptance Criteria:**
+- Learner can participate in discussion forums organized by topic.
+- System supports peer-to-peer help and mentorship matching.
+- Learner can share progress and achievements with community members.
+- Community features include moderation tools to maintain quality discussions.
+- Privacy settings allow learners to control their visibility and participation level.
+
+---
+
+### User Story 15: Accessibility Support
+
+**As a** learner with accessibility needs,  
+**I want** the system to support various accessibility features and assistive technologies  
+**so that** I can learn effectively regardless of my physical or cognitive limitations.
+
+**Acceptance Criteria:**
+- System complies with WCAG 2.1 AA accessibility standards.
+- Interface supports screen readers and keyboard navigation.
+- Learner can adjust font sizes, contrast, and color schemes.
+- Content includes alternative text for images and captions for videos.
+- System provides multiple ways to interact with content (visual, auditory, kinesthetic).
+
+---
+
+### User Story 16: Internationalization and Localization
+
+**As a** learner from different cultural and linguistic backgrounds,  
+**I want** the system to support my language and cultural context  
+**so that** I can learn in my preferred language with culturally relevant examples.
+
+**Acceptance Criteria:**
+- System supports multiple languages with complete interface translation.
+- Content can be localized with culturally appropriate examples and contexts.
+- System handles different date, time, and number formats based on locale.
+- Right-to-left (RTL) languages are properly supported.
+- Learner can switch languages without losing progress or data.
+
+---
+
+### User Story 17: Advanced Analytics and Insights
+
+**As an** educator or researcher,  
+**I want** access to advanced analytics and predictive insights about learning patterns  
+**so that** I can improve teaching methods and contribute to educational research.
+
+**Acceptance Criteria:**
+- System provides predictive analytics for learning outcome forecasting.
+- Advanced visualizations show learning patterns and trends over time.
+- Educator can export detailed analytics data for research purposes.
+- System identifies common misconceptions and learning bottlenecks.
+- Analytics respect privacy regulations and provide anonymized aggregate data.
+
+---
+
+### User Story 18: Interview Preparation and Career Readiness
+
+**As a** learner preparing for technical interviews,  
+**I want** specialized tracks and assessments that simulate real interview conditions  
+**so that** I can build confidence and readiness for job applications.
+
+**Acceptance Criteria:**
+- System provides interview-style coding challenges with time constraints.
+- Learner can practice with company-specific question patterns and difficulty levels.
+- System tracks interview readiness scores and provides improvement recommendations.
+- Mock interview features include behavioral and technical question practice.
+- Career guidance includes industry insights and job market trends.
+
+---
+
+### User Story 19: Gamification and Motivation
+
+**As a** learner,  
+**I want** engaging gamification elements and achievement systems  
+**so that** I stay motivated and enjoy the learning process.
+
+**Acceptance Criteria:**
+- System includes achievement badges and progress rewards.
+- Learner can participate in coding challenges and competitions.
+- Leaderboards and social features encourage healthy competition.
+- Progress visualization includes engaging graphics and celebrations.
+- Gamification elements are optional and can be disabled if preferred.
+
+---
+
+### User Story 20: System Administration and Monitoring
+
+**As a** system administrator,  
+**I want** comprehensive monitoring and management tools  
+**so that** I can ensure system performance, security, and reliability.
+
+**Acceptance Criteria:**
+- Admin dashboard provides real-time system health and performance metrics.
+- System includes automated alerting for issues and anomalies.
+- Admin can manage user accounts, roles, and permissions.
+- Comprehensive logging supports debugging and audit requirements.
+- System provides backup and recovery management interfaces.
+
+---
+
+## User Story Summary
+
+The Adaptive Learning System includes 20 comprehensive user stories covering:
+
+**Core Learning Features (Stories 1-6):**
+- Learner profile management and personalization
+- Mastery tracking with Bayesian Knowledge Tracing
+- Adaptive challenge selection and content delivery
+- Data-driven insights and progress analytics
+- Self-reported data integration
+
+**Educator and Administrative Features (Stories 5, 7, 13, 17, 20):**
+- Educator dashboards and student insights
+- Content creation and management tools
+- External assessment data integration
+- Advanced analytics for research
+- System administration and monitoring
+
+**Technical and Integration Features (Stories 8-9):**
+- Secure API access for third-party integrations
+- Scalability and performance optimization
+
+**User Experience and Accessibility (Stories 10-12, 15-16, 19):**
+- Privacy compliance and ethical data handling
+- Mobile optimization and offline capabilities
+- Goal setting and milestone tracking
+- Accessibility support for diverse learners
+- Internationalization and localization
+- Gamification and motivation features
+
+**Specialized Features (Stories 14, 18):**
+- Community features and peer learning
+- Interview preparation and career readiness
+
+These user stories provide comprehensive coverage of the adaptive learning platform requirements, ensuring the system serves diverse learner needs while maintaining technical excellence and regulatory compliance.

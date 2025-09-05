@@ -161,4 +161,295 @@ Raj logs in during his lunch break and quickly reviews challenges flagged by the
 
 ### Quotes  
 - “I don’t have time to waste on content that’s too easy or too hard.”  
-- “I want to see
+- “I want to see real progress, not just completion badges."  
+- "The system should know when I'm struggling and adjust accordingly."  
+
+### Key Metrics  
+- Time-to-mastery for specific competencies  
+- Accuracy of adaptive difficulty matching  
+- Frequency of self-reported confidence updates  
+- Correlation between predicted and actual performance  
+
+### Design & Development Implications  
+- Implement efficient cross-device data synchronization  
+- Provide quick-access mobile interfaces for short study sessions  
+- Include confidence tracking and self-assessment features  
+- Ensure minimal cognitive load in UI design for busy professionals  
+- Support offline mode for commute-based learning  
+
+---
+
+## Persona 3: **Dr. Sarah Martinez**  
+**Age:** 42  
+**Occupation:** Computer Science Professor & Educator  
+**Location:** Austin, TX, USA  
+**Photo Description:** Hispanic woman in professional attire, standing in front of a whiteboard with algorithms drawn on it.
+
+### Background & Demographics  
+- PhD in Computer Science, 15+ years teaching experience  
+- Teaches data structures and algorithms courses at a major university  
+- Manages 200+ students across multiple sections  
+- Active in educational technology research  
+
+### Goals, Needs, Motivations  
+- Monitor student progress and identify struggling learners early  
+- Access detailed analytics to improve curriculum and teaching methods  
+- Provide personalized support based on individual student needs  
+- Validate effectiveness of adaptive learning approaches  
+- Reduce administrative overhead while improving learning outcomes  
+
+### Pain Points & Challenges  
+- Difficulty tracking individual progress in large classes  
+- Limited visibility into student learning patterns and misconceptions  
+- Time-consuming manual assessment and feedback processes  
+- Inconsistent student engagement with traditional learning materials  
+- Need for evidence-based insights to improve teaching effectiveness  
+
+### Technology Proficiency & Preferences  
+- Proficient with educational technology and learning management systems  
+- Uses data visualization tools for research and analysis  
+- Prefers web-based platforms with export capabilities  
+- Comfortable with statistical analysis and interpretation  
+
+### Behavioral Patterns & Usage Scenarios  
+- Reviews student progress weekly and before major assessments  
+- Uses analytics to identify curriculum gaps and adjust teaching  
+- Provides targeted interventions for struggling students  
+- Shares insights with teaching assistants and department colleagues  
+
+### Decision-Making & Influences  
+- Influenced by pedagogical research and evidence-based practices  
+- Values systems that demonstrate measurable learning improvements  
+- Considers student feedback and engagement metrics  
+- Requires compliance with educational privacy regulations  
+
+### Communication Preferences & Channels  
+- Prefers detailed email reports with actionable insights  
+- Uses institutional communication channels for student outreach  
+- Appreciates dashboard summaries for quick status checks  
+
+### Success Criteria & Value Expectations  
+- Improved student learning outcomes and retention rates  
+- Reduced time spent on manual progress tracking  
+- Clear identification of at-risk students for early intervention  
+- Evidence of adaptive learning effectiveness for research purposes  
+
+### Accessibility Needs & Considerations  
+- Requires compliance with ADA and institutional accessibility standards  
+- Needs support for diverse student accessibility requirements  
+
+### Context of Use & Environmental Factors  
+- Uses system in office, classroom, and home environments  
+- Requires integration with existing institutional systems  
+- Needs reliable access during class periods and office hours  
+
+### Narrative & User Journey  
+Dr. Martinez logs in each Monday morning to review her students' progress from the previous week. The dashboard highlights students who are struggling with specific concepts like graph algorithms. She can drill down to see individual learning paths and mastery levels. Based on this data, she adjusts her upcoming lectures to address common misconceptions and reaches out to struggling students for additional support. The system's analytics help her publish research on adaptive learning effectiveness.
+
+### Quotes  
+- "I need to see not just what students are struggling with, but why they're struggling."  
+- "Data should inform my teaching, not just document what happened."  
+- "Early intervention is key - I need to identify problems before they become failures."  
+
+### Key Metrics  
+- Student mastery progression rates  
+- Early identification accuracy for at-risk students  
+- Correlation between system insights and actual performance  
+- Time saved on manual progress tracking  
+
+### Design & Development Implications  
+- Implement comprehensive educator dashboards with drill-down capabilities  
+- Provide export functionality for research and reporting  
+- Include early warning systems for at-risk student identification  
+- Ensure FERPA compliance and institutional integration capabilities  
+- Support bulk operations for managing large student populations  
+
+---
+
+## Persona 4: **Marcus Johnson**  
+**Age:** 28  
+**Occupation:** Career Changer & Bootcamp Graduate  
+**Location:** Chicago, IL, USA  
+**Photo Description:** African American man in casual clothing, working intensely on a laptop in a co-working space.
+
+### Background & Demographics  
+- Former marketing professional transitioning to software development  
+- Recently completed a 6-month coding bootcamp  
+- Limited formal computer science education  
+- Highly motivated but lacks confidence in algorithmic thinking  
+
+### Goals, Needs, Motivations  
+- Build strong foundation in data structures and algorithms for job interviews  
+- Overcome imposter syndrome and build confidence in technical skills  
+- Learn efficiently to compete with CS degree holders  
+- Understand not just "how" but "why" behind algorithmic concepts  
+- Prepare for technical interviews at major tech companies  
+
+### Pain Points & Challenges  
+- Feels overwhelmed by the depth of computer science concepts  
+- Struggles with mathematical foundations underlying algorithms  
+- Anxiety about competing with traditionally educated developers  
+- Difficulty knowing if he's truly ready for technical interviews  
+- Limited time and financial resources for extended learning  
+
+### Technology Proficiency & Preferences  
+- Comfortable with web development tools and basic programming  
+- Prefers hands-on, practical learning over theoretical approaches  
+- Uses mobile devices frequently for learning during commute  
+- Appreciates visual explanations and step-by-step guidance  
+
+### Behavioral Patterns & Usage Scenarios  
+- Studies intensively in 3-4 hour blocks on weekends  
+- Reviews concepts daily during commute using mobile device  
+- Seeks validation through practice problems and mock interviews  
+- Actively participates in online developer communities for support  
+
+### Decision-Making & Influences  
+- Influenced by success stories from other career changers  
+- Values practical, job-relevant skills over academic theory  
+- Motivated by clear progress indicators and milestone achievements  
+- Seeks recommendations from bootcamp instructors and mentors  
+
+### Communication Preferences & Channels  
+- Prefers community forums and peer support groups  
+- Uses Discord and Slack for real-time help and motivation  
+- Appreciates encouraging, non-judgmental feedback  
+
+### Success Criteria & Value Expectations  
+- Confidence in technical interview performance  
+- Clear understanding of when he's ready for job applications  
+- Practical problem-solving skills applicable to real work scenarios  
+- Supportive learning environment that acknowledges his unique background  
+
+### Accessibility Needs & Considerations  
+- Benefits from multiple explanation formats (visual, auditory, kinesthetic)  
+- Needs clear prerequisite indicators for advanced topics  
+
+### Context of Use & Environmental Factors  
+- Studies in various locations: home, co-working spaces, public transport  
+- Balances learning with job search activities and networking  
+- Limited budget for premium learning resources  
+
+### Narrative & User Journey  
+Marcus starts each study session by reviewing his personalized learning path, which adapts to his non-traditional background. The system provides foundational explanations for concepts he missed in formal education while challenging him appropriately. He tracks his progress toward interview readiness through specific milestones. The platform's supportive tone and practical focus help build his confidence while preparing him for technical challenges.
+
+### Quotes  
+- "I need to know I'm learning the right things to be competitive."  
+- "Sometimes I feel like I'm missing fundamental knowledge that everyone else has."  
+- "I want to understand the 'why' behind algorithms, not just memorize them."  
+
+### Key Metrics  
+- Confidence level improvements over time  
+- Success rate on interview-style problems  
+- Time to achieve job-readiness milestones  
+- Engagement with foundational vs. advanced content  
+
+### Design & Development Implications  
+- Provide foundational concept explanations and prerequisite guidance  
+- Include confidence tracking and motivational elements  
+- Offer interview preparation tracks and readiness assessments  
+- Support diverse learning styles with multiple content formats  
+- Implement mentorship or peer support features  
+
+---
+
+## Persona 5: **Aisha Okonkwo**  
+**Age:** 19  
+**Occupation:** High School Student & Programming Enthusiast  
+**Location:** Lagos, Nigeria  
+**Photo Description:** Young African woman with braided hair, enthusiastically coding on a tablet in a bright study room.
+
+### Background & Demographics  
+- Final year high school student with strong interest in computer science  
+- Self-taught programmer with experience in Python and web development  
+- Plans to study computer science at university  
+- Limited access to formal computer science education in her region  
+
+### Goals, Needs, Motivations  
+- Prepare for university-level computer science coursework  
+- Build portfolio projects to strengthen university applications  
+- Learn advanced concepts not available in local curriculum  
+- Connect with global programming community and mentors  
+- Develop skills for potential scholarship opportunities  
+
+### Pain Points & Challenges  
+- Limited access to quality computer science education locally  
+- Inconsistent internet connectivity affecting online learning  
+- Lack of local mentors or peers with similar interests  
+- Uncertainty about university preparation requirements  
+- Financial constraints limiting access to premium resources  
+
+### Technology Proficiency & Preferences  
+- Primarily uses mobile devices and tablets for learning  
+- Comfortable with social media and online communities  
+- Prefers interactive, gamified learning experiences  
+- Uses free and open-source tools due to budget constraints  
+
+### Behavioral Patterns & Usage Scenarios  
+- Studies after school and on weekends when internet is available  
+- Downloads content for offline study during connectivity issues  
+- Shares progress and seeks help through online communities  
+- Balances programming study with regular academic coursework  
+
+### Decision-Making & Influences  
+- Influenced by successful African tech entrepreneurs and developers  
+- Values free or affordable learning resources  
+- Motivated by global opportunities and scholarship possibilities  
+- Seeks validation from international programming communities  
+
+### Communication Preferences & Channels  
+- Active on social media platforms and programming forums  
+- Prefers text-based communication over video calls  
+- Appreciates multilingual support and cultural sensitivity  
+
+### Success Criteria & Value Expectations  
+- University admission preparedness in computer science  
+- Portfolio of projects demonstrating technical competency  
+- Connection with global programming community  
+- Scholarship or opportunity identification through skill demonstration  
+
+### Accessibility Needs & Considerations  
+- Requires mobile-optimized interfaces and offline capabilities  
+- Benefits from bandwidth-efficient content delivery  
+- Needs culturally relevant examples and diverse representation  
+
+### Context of Use & Environmental Factors  
+- Studies in shared family spaces with potential distractions  
+- Intermittent internet connectivity requiring offline support  
+- Uses primarily mobile devices due to limited computer access  
+
+### Narrative & User Journey  
+Aisha accesses the platform after school using her tablet, downloading lessons for offline study. The system adapts to her mobile-first usage and provides university preparation tracks. She participates in global coding challenges and connects with mentors through the platform's community features. Her progress is tracked toward specific university readiness goals, and the system highlights scholarship opportunities based on her achievements.
+
+### Quotes  
+- "I want to be ready for university computer science, even without formal preparation."  
+- "Learning should work on my phone since that's what I have access to."  
+- "I need to prove I can compete globally, not just locally."  
+
+### Key Metrics  
+- University preparation milestone completion  
+- Mobile engagement and offline usage patterns  
+- Community participation and mentorship connections  
+- Portfolio project completion rates  
+
+### Design & Development Implications  
+- Prioritize mobile-first design and offline functionality  
+- Include university preparation tracks and milestone tracking  
+- Implement community features and mentorship matching  
+- Provide bandwidth-efficient content delivery options  
+- Support multiple languages and cultural contexts  
+- Include scholarship and opportunity discovery features  
+
+---
+
+## Summary
+
+These five personas represent the diverse user base for the Adaptive Learning System:
+
+1. **Emma Chen** - Traditional CS student seeking efficient exam and interview preparation
+2. **Raj Patel** - Working professional pursuing career advancement through skill development  
+3. **Dr. Sarah Martinez** - Educator requiring analytics and insights for teaching improvement
+4. **Marcus Johnson** - Career changer building confidence and foundational knowledge
+5. **Aisha Okonkwo** - International student preparing for university with limited resources
+
+Each persona brings unique needs, constraints, and success criteria that should inform the system's design, functionality, and user experience. The diversity in demographics, technology access, learning contexts, and goals ensures the platform can serve a global, inclusive user base while maintaining effectiveness across different use cases.
