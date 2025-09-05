@@ -15,7 +15,7 @@
 ## 1. Project Purpose and Business Justification  
 Traditional educational methods often apply a one-size-fits-all approach that fails to address individual learner needs, potentially limiting engagement and mastery. The Adaptive Learning System project aims to revolutionize the educational experience by delivering personalized, learner-centric content specifically targeting programming and data structures concepts. By dynamically adjusting learning paths and challenges based on real-time learner data, the system will maximize learning efficiency and outcomes.
 
-This project addresses critical market needs for personalized education technology, with potential ROI through improved learning outcomes, reduced training costs, and scalable educational delivery. The business case is supported by extensive stakeholder analysis and market research demonstrating demand for adaptive learning solutions in technical education.y, engagement, and mastery. This aligns with broader business goals to innovate educational technologies, improve learner outcomes, and position the organization as a leader in adaptive education solutions.  
+This project addresses critical market needs for personalized education technology, with potential ROI through improved learning outcomes, reduced training costs, and scalable educational delivery. The business case is supported by extensive stakeholder analysis and market research demonstrating demand for adaptive learning solutions in technical education. This aligns with broader business goals to innovate educational technologies, improve learner outcomes, and position the organization as a leader in adaptive education solutions.  
 
 ---
 
