@@ -72,18 +72,28 @@ Certainly! Below are detailed user stories for the Adaptive Learning System proj
 
 ---
 
-### User Story 5: Educator Access to Learner Insights
+### User Story 5: Educator Analytics Access
 
 **As an** educator or manager,  
 **I want** to access aggregated performance data and insights for my learners  
 **so that** I can identify common difficulties and support learner success.
 
+**Priority:** Medium  
+**Story Points:** 8  
+**Epic:** EPIC-004  
+**Labels:** educator-tools, analytics, reporting
+
 **Acceptance Criteria:**
-- Educators can view summary reports for groups or individual learners.
-- Reports include mastery levels, progress trends, and challenge outcomes.
-- Access is secured and role-based, ensuring learner privacy.
-- Educators can export reports in common formats (CSV, PDF).
-- System respects GDPR and ethical data handling in data sharing.
+- Educators can view summary reports for groups or individual learners
+- Reports include mastery levels, progress trends, and challenge outcomes
+- Access is secured and role-based, ensuring learner privacy
+- Educators can export reports in common formats (CSV, PDF)
+- System respects GDPR and ethical data handling in data sharing
+- Dashboard provides real-time analytics and performance metrics
+- Educators can filter and customize report views by time period, competency, or learner groups
+- System provides drill-down capabilities from aggregate to individual learner data
+- Reports include visual analytics (charts, graphs) for trend analysis
+- Automated report scheduling and delivery options available
 
 ---
 

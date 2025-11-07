@@ -74,6 +74,9 @@ This document presents the final technical architecture decisions for the Adapti
 ├── content/       # Content delivery
 ├── assessments/   # Assessment and tracking
 ├── analytics/     # Performance analytics
+│   ├── learner/   # Individual learner analytics
+│   └── educator/  # Educator dashboard and reporting
+├── reports/       # Report generation and export
 └── admin/         # Administrative functions
 ```
 
@@ -96,6 +99,10 @@ This document presents the final technical architecture decisions for the Adapti
 7. **learner_progress** - Progress tracking
 8. **learner_activity_logs** - Detailed interaction logs
 9. **assessment_reports** - External assessment data
+10. **educator_groups** - Educator-managed learner groups
+11. **report_templates** - Customizable report configurations
+12. **scheduled_reports** - Automated report scheduling
+13. **report_cache** - Cached report data for performance
 
 #### Indexing Strategy
 
@@ -119,6 +126,14 @@ db.content_items.createIndex({ "type": 1, "competencies": 1 })
 
 // challenges collection
 db.challenges.createIndex({ "competencies": 1, "difficulty_level": 1 })
+
+// educator_groups collection
+db.educator_groups.createIndex({ "educator_id": 1 })
+db.educator_groups.createIndex({ "learner_ids": 1 })
+
+// report_cache collection
+db.report_cache.createIndex({ "report_type": 1, "created_at": -1 })
+db.report_cache.createIndex({ "educator_id": 1, "created_at": -1 })
 ```
 
 **Compound Indexes for Analytics:**
@@ -488,6 +503,28 @@ GET    /api/v1/content/modules
 GET    /api/v1/content/modules/{id}
 GET    /api/v1/content/items/{id}
 POST   /api/v1/content/items/{id}/progress
+```
+
+**Educator Analytics:**
+```
+GET    /api/v1/analytics/educator/dashboard
+GET    /api/v1/analytics/educator/learners
+GET    /api/v1/analytics/educator/learners/{id}
+GET    /api/v1/analytics/educator/groups/{id}
+GET    /api/v1/analytics/educator/competencies
+GET    /api/v1/analytics/educator/trends
+POST   /api/v1/analytics/educator/filters
+```
+
+**Report Generation:**
+```
+GET    /api/v1/reports/learner/{id}
+GET    /api/v1/reports/group/{id}
+POST   /api/v1/reports/custom
+GET    /api/v1/reports/{report_id}/export/{format}
+POST   /api/v1/reports/schedule
+GET    /api/v1/reports/scheduled
+DELETE /api/v1/reports/scheduled/{id}
 ```
 
 ### Appendix B: Environment Variables

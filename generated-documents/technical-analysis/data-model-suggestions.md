@@ -188,6 +188,95 @@ Since MongoDB is a document-oriented NoSQL database, your logical model will oft
 }
 ```
 
+#### `educator_groups` Collection
+```json
+{
+  "_id": ObjectId,
+  "educator_id": ObjectId,
+  "name": "string",  // e.g., "CS101 Fall 2025"
+  "description": "string",
+  "learner_ids": ["ObjectId"],  // array of learner references
+  "parent_group_id": ObjectId,  // for hierarchical groups (optional)
+  "group_type": "string",  // e.g., "class", "section", "course"
+  "access_permissions": {
+    "shared_with": ["ObjectId"],  // other educators with access
+    "permission_level": "string"  // "read", "write", "admin"
+  },
+  "created_at": ISODate,
+  "updated_at": ISODate,
+  "metadata": {...}
+}
+```
+
+#### `report_templates` Collection
+```json
+{
+  "_id": ObjectId,
+  "educator_id": ObjectId,
+  "name": "string",  // e.g., "Weekly Progress Report"
+  "description": "string",
+  "template_config": {
+    "metrics": ["string"],  // e.g., ["mastery_levels", "progress_trends"]
+    "time_period": "string",  // e.g., "weekly", "monthly", "custom"
+    "filters": {
+      "competencies": ["ObjectId"],
+      "groups": ["ObjectId"],
+      "date_range": {
+        "start": ISODate,
+        "end": ISODate
+      }
+    },
+    "visualizations": ["string"],  // e.g., ["charts", "tables", "graphs"]
+    "export_format": "string"  // e.g., "pdf", "csv", "excel"
+  },
+  "is_public": Boolean,  // can be shared with other educators
+  "created_at": ISODate,
+  "updated_at": ISODate
+}
+```
+
+#### `scheduled_reports` Collection
+```json
+{
+  "_id": ObjectId,
+  "educator_id": ObjectId,
+  "template_id": ObjectId,
+  "schedule_config": {
+    "frequency": "string",  // e.g., "daily", "weekly", "monthly"
+    "day_of_week": Number,  // for weekly reports (0-6)
+    "day_of_month": Number,  // for monthly reports (1-31)
+    "time": "string",  // e.g., "09:00"
+    "timezone": "string"
+  },
+  "delivery_config": {
+    "method": "string",  // e.g., "email", "dashboard"
+    "recipients": ["string"],  // email addresses
+    "subject_template": "string"
+  },
+  "is_active": Boolean,
+  "last_run": ISODate,
+  "next_run": ISODate,
+  "created_at": ISODate,
+  "updated_at": ISODate
+}
+```
+
+#### `report_cache` Collection
+```json
+{
+  "_id": ObjectId,
+  "educator_id": ObjectId,
+  "report_type": "string",  // e.g., "dashboard", "custom_report"
+  "cache_key": "string",  // unique identifier for cached data
+  "report_data": {...},  // cached report results
+  "filters_applied": {...},  // filters used to generate this cache
+  "created_at": ISODate,
+  "expires_at": ISODate,
+  "access_count": Number,
+  "file_path": "string"  // for large cached files
+}
+```
+
 ---
 
 # 3. Data Normalization and Optimization Strategies

@@ -185,6 +185,11 @@ As an educator or manager, I want to access aggregated performance data and insi
 - Access is secured and role-based, ensuring learner privacy
 - Educators can export reports in common formats (CSV, PDF)
 - System respects GDPR and ethical data handling in data sharing
+- Dashboard provides real-time analytics and performance metrics
+- Educators can filter and customize report views by time period, competency, or learner groups
+- System provides drill-down capabilities from aggregate to individual learner data
+- Reports include visual analytics (charts, graphs) for trend analysis
+- Automated report scheduling and delivery options available
 
 **Priority:** Medium  
 **Story Points:** 8  
