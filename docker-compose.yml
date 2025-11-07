@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # BKT Algorithm API Service
+  bkt-api:
+    build:
+      context: .
+      target: development
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - MONGODB_URI=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=development-secret-key
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    networks:
+      - bkt-network
+    restart: unless-stopped
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=adaptive_learning
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - bkt-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - bkt-network
+    restart: unless-stopped
+
+  # MongoDB Express (Development only)
+  mongo-express:
+    image: mongo-express:1.0.0
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_URL=mongodb://admin:password@mongodb:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    depends_on:
+      - mongodb
+    networks:
+      - bkt-network
+    profiles:
+      - development
+
+  # Redis Commander (Development only)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - bkt-network
+    profiles:
+      - development
+
+  # Test Runner Service
+  test-runner:
+    build:
+      context: .
+      target: development
+    environment:
+      - ENVIRONMENT=testing
+      - MONGODB_URI=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - .:/app
+    networks:
+      - bkt-network
+    command: pytest tests/ -v
+    profiles:
+      - testing
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  bkt-network:
+    driver: bridge
