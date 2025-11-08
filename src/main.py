@@ -1,20 +1,24 @@
 """
-Main FastAPI application for the Adaptive Learning System.
+Main FastAPI application for the Adaptive Learning System
 
-This module sets up the FastAPI application with mastery tracking endpoints
-and configures logging, middleware, and database connections.
+This module sets up the FastAPI application with all routes, middleware,
+and database connections for the learner profile management system.
 """
 
-import logging
 import os
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import time
+from dotenv import load_dotenv
 
-from .api.mastery_endpoints import router as mastery_router
-from .utils.dependencies import close_database_connection
+from .db.database import db
+from .db.learner_repository import LearnerRepository
+from .api.learner_profile_routes import router as learner_router
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -26,91 +30,103 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan manager."""
+    """Application lifespan manager"""
     # Startup
-    logger.info("Starting Adaptive Learning System API")
+    logger.info("Starting up Adaptive Learning System...")
+    
+    try:
+        # Connect to database
+        await db.connect_to_mongo()
+        
+        # Create indexes
+        collection = await db.get_collection("learner_profiles")
+        repository = LearnerRepository(collection)
+        await repository.create_indexes()
+        
+        logger.info("Database connected and indexes created")
+        
+    except Exception as e:
+        logger.error(f"Failed to initialize application: {e}")
+        raise
+    
     yield
+    
     # Shutdown
-    logger.info("Shutting down Adaptive Learning System API")
-    await close_database_connection()
+    logger.info("Shutting down Adaptive Learning System...")
+    await db.close_mongo_connection()
 
 
 # Create FastAPI application
 app = FastAPI(
-    title="Adaptive Learning System - Mastery Tracking API",
-    description="API for tracking learner mastery using Bayesian Knowledge Tracing",
+    title="Adaptive Learning System",
+    description="A personalized learning platform that adapts to individual learner needs and preferences",
     version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
     lifespan=lifespan
 )
 
-# Add CORS middleware
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8080").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# Request timing middleware
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    """Add processing time to response headers."""
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
-    return response
-
-
 # Global exception handler
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    """Global exception handler for unhandled errors."""
-    logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
+async def global_exception_handler(request, exc):
+    """Global exception handler"""
+    logger.error(f"Unhandled exception: {exc}")
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal server error"}
     )
 
 
-# Include routers
-app.include_router(mastery_router)
-
-
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
-    return {
-        "status": "healthy",
-        "service": "adaptive-learning-mastery-tracking",
-        "version": "1.0.0",
-        "timestamp": time.time()
-    }
+    """Health check endpoint"""
+    try:
+        # Test database connection
+        await db.database.command("ping")
+        return {
+            "status": "healthy",
+            "service": "Adaptive Learning System",
+            "version": "1.0.0",
+            "database": "connected"
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        raise HTTPException(status_code=503, detail="Service unavailable")
 
 
 # Root endpoint
 @app.get("/")
 async def root():
-    """Root endpoint with API information."""
+    """Root endpoint"""
     return {
-        "message": "Adaptive Learning System - Mastery Tracking API",
+        "message": "Welcome to the Adaptive Learning System",
         "version": "1.0.0",
         "docs": "/docs",
         "health": "/health"
     }
 
 
+# Include routers
+app.include_router(learner_router)
+
+
 if __name__ == "__main__":
     import uvicorn
     
-    # Get configuration from environment
+    port = int(os.getenv("PORT", 8000))
     host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", "8000"))
     
-    # Run the application
     uvicorn.run(
         "src.main:app",
         host=host,

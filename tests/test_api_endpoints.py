@@ -1,400 +1,340 @@
 """
-Tests for the mastery tracking API endpoints.
+Tests for learner profile API endpoints
 
-This module contains integration tests for the FastAPI endpoints
-that handle learner interactions and mastery tracking.
+This module tests the FastAPI endpoints for learner profile management
+including registration, authentication, profile updates, and data retrieval.
 """
 
 import pytest
-import asyncio
-from datetime import datetime, timedelta
 from httpx import AsyncClient
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, patch
 
 from src.main import app
-from src.models.mastery import (
-    InteractionLogRequest,
-    LearnerInteraction,
-    MasteryLevel,
-    ActivityType,
-    InteractionType,
-    DifficultyLevel,
-    BKTParameters
-)
+from src.models.learner_profile import LearnerProfile, EducationLevel, LearningStyle
 
 
-class TestMasteryEndpoints:
-    """Test cases for mastery tracking API endpoints."""
+@pytest.fixture
+def client():
+    """Create test client"""
+    return TestClient(app)
+
+
+@pytest.fixture
+def sample_registration_data():
+    """Sample registration data for testing"""
+    return {
+        "email": "test@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "password": "SecurePass123",
+        "username": "johndoe",
+        "demographics": {
+            "age": 25,
+            "education_level": "bachelor",
+            "country": "United States"
+        },
+        "learning_preferences": {
+            "learning_styles": ["visual"],
+            "session_duration_preference": 30
+        },
+        "programming_experience": {
+            "overall_experience": "beginner",
+            "languages_known": ["python"],
+            "years_of_experience": 1
+        },
+        "goals": ["Learn data structures"],
+        "interests": ["algorithms"]
+    }
+
+
+@pytest.fixture
+def sample_learner_profile():
+    """Sample learner profile for mocking"""
+    from datetime import datetime
+    from bson import ObjectId
     
-    @pytest.fixture
-    def client(self):
-        """Create test client."""
-        return TestClient(app)
+    return LearnerProfile(
+        id=ObjectId(),
+        email="test@example.com",
+        first_name="John",
+        last_name="Doe",
+        username="johndoe",
+        demographics={
+            "age": 25,
+            "education_level": EducationLevel.BACHELOR,
+            "country": "United States"
+        },
+        learning_preferences={
+            "learning_styles": [LearningStyle.VISUAL],
+            "session_duration_preference": 30
+        },
+        programming_experience={
+            "overall_experience": "beginner",
+            "languages_known": ["python"],
+            "years_of_experience": 1
+        },
+        goals=["Learn data structures"],
+        interests=["algorithms"],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+        profile_completion_percentage=85.0
+    )
+
+
+class TestLearnerProfileAPI:
+    """Test cases for learner profile API endpoints"""
     
-    @pytest.fixture
-    def mock_repository(self):
-        """Create mock repository."""
-        return AsyncMock()
-    
-    @pytest.fixture
-    def mock_bkt_engine(self):
-        """Create mock BKT engine."""
-        return MagicMock()
-    
-    @pytest.fixture
-    def sample_interaction_request(self):
-        """Create sample interaction request."""
-        return {
-            "learner_id": "test_learner_001",
-            "activity_id": "quiz_arrays_001",
-            "activity_type": "quiz",
-            "interaction_type": "completion",
-            "competency_ids": ["arrays_basic", "arrays_traversal"],
-            "score": 0.85,
-            "is_correct": True,
-            "attempts": 1,
-            "time_spent": 120.5,
-            "hints_used": 0,
-            "difficulty_level": "intermediate",
-            "session_id": "session_123",
-            "metadata": {
-                "browser": "Chrome",
-                "device": "desktop"
-            }
-        }
-    
-    @pytest.fixture
-    def sample_mastery_level(self):
-        """Create sample mastery level."""
-        return MasteryLevel(
-            learner_id="test_learner_001",
-            competency_id="arrays_basic",
-            current_mastery=0.65,
-            bkt_parameters=BKTParameters(),
-            total_interactions=5,
-            correct_interactions=4,
-            average_score=0.78,
-            is_mastered=False
-        )
-    
-    def test_health_check(self, client):
-        """Test health check endpoint."""
-        response = client.get("/health")
-        assert response.status_code == 200
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.create_learner_profile')
+    def test_register_learner_success(self, mock_create, mock_collection, client, sample_registration_data, sample_learner_profile):
+        """Test successful learner registration"""
+        mock_collection.return_value = AsyncMock()
+        mock_create.return_value = sample_learner_profile
         
+        response = client.post("/api/v1/learners/register", json=sample_registration_data)
+        
+        assert response.status_code == 201
         data = response.json()
-        assert data["status"] == "healthy"
-        assert "service" in data
-        assert "version" in data
-        assert "timestamp" in data
+        assert data["email"] == "test@example.com"
+        assert data["first_name"] == "John"
+        assert data["last_name"] == "Doe"
+        assert data["username"] == "johndoe"
+        assert "id" in data
+        assert "profile_completion_percentage" in data
     
-    def test_root_endpoint(self, client):
-        """Test root endpoint."""
-        response = client.get("/")
-        assert response.status_code == 200
+    def test_register_learner_invalid_email(self, client, sample_registration_data):
+        """Test registration with invalid email"""
+        sample_registration_data["email"] = "invalid-email"
         
-        data = response.json()
-        assert "message" in data
-        assert "version" in data
-        assert "docs" in data
+        response = client.post("/api/v1/learners/register", json=sample_registration_data)
+        
+        assert response.status_code == 422  # Validation error
+        assert "email" in response.json()["detail"][0]["loc"]
     
-    @pytest.mark.asyncio
-    async def test_log_interaction_success(self, sample_interaction_request, mock_repository, mock_bkt_engine):
-        """Test successful interaction logging."""
-        # Mock repository responses
-        mock_repository.save_interaction.return_value = "interaction_123"
-        mock_repository.get_mastery_level.return_value = None
-        mock_repository.create_initial_mastery_level.return_value = MasteryLevel(
-            learner_id="test_learner_001",
-            competency_id="arrays_basic",
-            current_mastery=0.1
-        )
-        mock_repository.save_mastery_level.return_value = "mastery_123"
+    def test_register_learner_weak_password(self, client, sample_registration_data):
+        """Test registration with weak password"""
+        sample_registration_data["password"] = "weak"
         
-        # Mock BKT engine response
-        updated_mastery = MasteryLevel(
-            learner_id="test_learner_001",
-            competency_id="arrays_basic",
-            current_mastery=0.25,
-            is_mastered=False
-        )
-        mock_bkt_engine.update_mastery.return_value = updated_mastery
-        
-        # Override dependencies
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository,
-            "src.utils.dependencies.get_bkt_engine": lambda: mock_bkt_engine
-        }
-        
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.post(
-                    "/api/v1/mastery/interactions",
-                    json=sample_interaction_request
-                )
-            
-            assert response.status_code == 200
-            
-            data = response.json()
-            assert data["learner_id"] == "test_learner_001"
-            assert "arrays_basic" in data["updated_competencies"]
-            assert "arrays_traversal" in data["updated_competencies"]
-            assert "processing_time" in data
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    @pytest.mark.asyncio
-    async def test_log_interaction_invalid_data(self):
-        """Test interaction logging with invalid data."""
-        invalid_request = {
-            "learner_id": "",  # Invalid empty learner ID
-            "activity_id": "quiz_001",
-            "activity_type": "invalid_type",  # Invalid activity type
-            "interaction_type": "completion",
-            "competency_ids": [],  # Empty competency list
-            "score": 1.5  # Invalid score > 1.0
-        }
-        
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.post(
-                "/api/v1/mastery/interactions",
-                json=invalid_request
-            )
+        response = client.post("/api/v1/learners/register", json=sample_registration_data)
         
         assert response.status_code == 422  # Validation error
     
-    @pytest.mark.asyncio
-    async def test_get_learner_progress_success(self, sample_mastery_level, mock_repository):
-        """Test successful progress report retrieval."""
-        # Mock repository responses
-        mock_repository.get_mastery_levels_by_learner.return_value = [sample_mastery_level]
-        mock_repository.get_interactions_by_learner.return_value = []
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.create_learner_profile')
+    def test_register_learner_duplicate_email(self, mock_create, mock_collection, client, sample_registration_data):
+        """Test registration with duplicate email"""
+        mock_collection.return_value = AsyncMock()
+        mock_create.side_effect = ValueError("Email address already exists")
         
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository
-        }
+        response = client.post("/api/v1/learners/register", json=sample_registration_data)
         
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get("/api/v1/mastery/progress/test_learner_001")
-            
-            assert response.status_code == 200
-            
-            data = response.json()
-            assert data["learner_id"] == "test_learner_001"
-            assert data["total_competencies"] == 1
-            assert data["mastered_competencies"] == 0
-            assert "competency_mastery" in data
-            
-        finally:
-            app.dependency_overrides = {}
+        assert response.status_code == 400
+        assert "Email address already exists" in response.json()["detail"]
     
-    @pytest.mark.asyncio
-    async def test_get_learner_progress_not_found(self, mock_repository):
-        """Test progress report for non-existent learner."""
-        mock_repository.get_mastery_levels_by_learner.return_value = []
+    @patch('src.api.auth.authenticate_user')
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.update_last_login')
+    def test_login_success(self, mock_update_login, mock_collection, mock_auth, client, sample_learner_profile):
+        """Test successful login"""
+        mock_collection.return_value = AsyncMock()
+        mock_auth.return_value = sample_learner_profile
+        mock_update_login.return_value = True
         
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository
+        login_data = {
+            "username": "test@example.com",
+            "password": "SecurePass123"
         }
         
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get("/api/v1/mastery/progress/nonexistent_learner")
-            
-            assert response.status_code == 404
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    @pytest.mark.asyncio
-    async def test_get_mastery_level_success(self, sample_mastery_level, mock_repository):
-        """Test successful mastery level retrieval."""
-        mock_repository.get_mastery_level.return_value = sample_mastery_level
+        response = client.post("/api/v1/learners/login", data=login_data)
         
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository
-        }
-        
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get(
-                    "/api/v1/mastery/mastery/test_learner_001/arrays_basic"
-                )
-            
-            assert response.status_code == 200
-            
-            data = response.json()
-            assert data["learner_id"] == "test_learner_001"
-            assert data["competency_id"] == "arrays_basic"
-            assert data["current_mastery"] == 0.65
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    @pytest.mark.asyncio
-    async def test_get_mastery_level_not_found(self, mock_repository):
-        """Test mastery level retrieval for non-existent data."""
-        mock_repository.get_mastery_level.return_value = None
-        
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository
-        }
-        
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get(
-                    "/api/v1/mastery/mastery/nonexistent/nonexistent"
-                )
-            
-            assert response.status_code == 404
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    @pytest.mark.asyncio
-    async def test_get_learner_interactions(self, mock_repository):
-        """Test learner interactions retrieval."""
-        sample_interactions = [
-            LearnerInteraction(
-                learner_id="test_learner_001",
-                activity_id="quiz_001",
-                activity_type=ActivityType.QUIZ,
-                interaction_type=InteractionType.COMPLETION,
-                competency_ids=["arrays_basic"],
-                score=0.8,
-                is_correct=True
-            )
-        ]
-        
-        mock_repository.get_interactions_by_learner.return_value = sample_interactions
-        
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository
-        }
-        
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get(
-                    "/api/v1/mastery/interactions/test_learner_001?limit=10"
-                )
-            
-            assert response.status_code == 200
-            
-            data = response.json()
-            assert data["learner_id"] == "test_learner_001"
-            assert data["total_interactions"] == 1
-            assert len(data["interactions"]) == 1
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    @pytest.mark.asyncio
-    async def test_get_competency_stats(self, mock_repository):
-        """Test competency statistics retrieval."""
-        mock_stats = {
-            "total_learners": 10,
-            "mastered_learners": 6,
-            "average_mastery": 0.72,
-            "mastery_rate": 60.0
-        }
-        
-        mock_repository.get_competency_performance_stats.return_value = mock_stats
-        mock_repository.get_competency.return_value = None
-        
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository
-        }
-        
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get("/api/v1/mastery/competencies/arrays_basic/stats")
-            
-            assert response.status_code == 200
-            
-            data = response.json()
-            assert data["competency_id"] == "arrays_basic"
-            assert data["statistics"]["total_learners"] == 10
-            assert data["statistics"]["mastery_rate"] == 60.0
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    @pytest.mark.asyncio
-    async def test_get_learner_dashboard(self, mock_repository, mock_bkt_engine):
-        """Test learner dashboard data retrieval."""
-        mock_summary = {
-            "total_competencies": 5,
-            "mastered_competencies": 2,
-            "average_mastery": 0.65,
-            "mastery_percentage": 40.0
-        }
-        
-        sample_mastery_levels = [
-            MasteryLevel(
-                learner_id="test_learner_001",
-                competency_id="arrays_basic",
-                current_mastery=0.75,
-                is_mastered=False
-            )
-        ]
-        
-        mock_repository.get_learner_progress_summary.return_value = mock_summary
-        mock_repository.get_mastery_levels_by_learner.return_value = sample_mastery_levels
-        mock_repository.get_interactions_by_learner.return_value = []
-        
-        mock_bkt_engine.calculate_confidence_interval.return_value = (0.6, 0.9)
-        mock_bkt_engine.get_learning_velocity.return_value = 0.05
-        mock_bkt_engine.recommend_practice_intensity.return_value = "moderate"
-        
-        app.dependency_overrides = {
-            "src.utils.dependencies.get_mastery_repository": lambda: mock_repository,
-            "src.utils.dependencies.get_bkt_engine": lambda: mock_bkt_engine
-        }
-        
-        try:
-            async with AsyncClient(app=app, base_url="http://test") as client:
-                response = await client.get("/api/v1/mastery/analytics/dashboard/test_learner_001")
-            
-            assert response.status_code == 200
-            
-            data = response.json()
-            assert data["learner_id"] == "test_learner_001"
-            assert "summary" in data
-            assert "insights" in data
-            assert len(data["insights"]) == 1
-            assert data["insights"][0]["practice_recommendation"] == "moderate"
-            
-        finally:
-            app.dependency_overrides = {}
-    
-    def test_api_documentation_accessible(self, client):
-        """Test that API documentation is accessible."""
-        response = client.get("/docs")
         assert response.status_code == 200
+        data = response.json()
+        assert "access_token" in data
+        assert data["token_type"] == "bearer"
+        assert "expires_in" in data
+    
+    @patch('src.api.auth.authenticate_user')
+    def test_login_invalid_credentials(self, mock_auth, client):
+        """Test login with invalid credentials"""
+        mock_auth.return_value = None
         
-        response = client.get("/openapi.json")
+        login_data = {
+            "username": "test@example.com",
+            "password": "WrongPassword"
+        }
+        
+        response = client.post("/api/v1/learners/login", data=login_data)
+        
+        assert response.status_code == 401
+        assert "Incorrect email or password" in response.json()["detail"]
+    
+    @patch('src.api.auth.get_current_active_user')
+    def test_get_current_profile(self, mock_current_user, client, sample_learner_profile):
+        """Test getting current user profile"""
+        mock_current_user.return_value = sample_learner_profile
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.get("/api/v1/learners/me", headers=headers)
+        
         assert response.status_code == 200
-        
-        # Verify OpenAPI schema contains our endpoints
-        openapi_data = response.json()
-        assert "/api/v1/mastery/interactions" in openapi_data["paths"]
-        assert "/api/v1/mastery/progress/{learner_id}" in openapi_data["paths"]
+        data = response.json()
+        assert data["email"] == "test@example.com"
+        assert data["first_name"] == "John"
+        assert data["profile_completion_percentage"] == 85.0
     
-    def test_cors_headers(self, client):
-        """Test CORS headers are present."""
-        response = client.options("/api/v1/mastery/interactions")
+    def test_get_current_profile_unauthorized(self, client):
+        """Test getting current profile without authentication"""
+        response = client.get("/api/v1/learners/me")
         
-        # Should have CORS headers
-        assert "access-control-allow-origin" in response.headers
-        assert "access-control-allow-methods" in response.headers
+        assert response.status_code == 403  # No authorization header
     
-    def test_process_time_header(self, client):
-        """Test that process time header is added."""
-        response = client.get("/health")
+    @patch('src.api.auth.get_current_active_user')
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.update_learner_profile')
+    def test_update_profile_success(self, mock_update, mock_collection, mock_current_user, client, sample_learner_profile):
+        """Test successful profile update"""
+        mock_current_user.return_value = sample_learner_profile
+        mock_collection.return_value = AsyncMock()
         
-        # Should have process time header
-        assert "x-process-time" in response.headers
-        assert float(response.headers["x-process-time"]) >= 0
+        # Create updated profile
+        updated_profile = sample_learner_profile.copy()
+        updated_profile.first_name = "Jane"
+        updated_profile.demographics.age = 30
+        mock_update.return_value = updated_profile
+        
+        update_data = {
+            "first_name": "Jane",
+            "demographics": {
+                "age": 30
+            }
+        }
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.put("/api/v1/learners/me", json=update_data, headers=headers)
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert data["first_name"] == "Jane"
+    
+    @patch('src.api.auth.get_current_active_user')
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.update_learner_profile')
+    def test_update_profile_not_found(self, mock_update, mock_collection, mock_current_user, client, sample_learner_profile):
+        """Test profile update when profile not found"""
+        mock_current_user.return_value = sample_learner_profile
+        mock_collection.return_value = AsyncMock()
+        mock_update.return_value = None
+        
+        update_data = {"first_name": "Jane"}
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.put("/api/v1/learners/me", json=update_data, headers=headers)
+        
+        assert response.status_code == 404
+    
+    @patch('src.api.auth.get_current_active_user')
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.get_learner_by_id')
+    def test_get_learner_by_id_own_profile(self, mock_get, mock_collection, mock_current_user, client, sample_learner_profile):
+        """Test getting learner profile by ID (own profile)"""
+        mock_current_user.return_value = sample_learner_profile
+        mock_collection.return_value = AsyncMock()
+        mock_get.return_value = sample_learner_profile
+        
+        learner_id = str(sample_learner_profile.id)
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.get(f"/api/v1/learners/{learner_id}", headers=headers)
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert data["email"] == "test@example.com"
+    
+    @patch('src.api.auth.get_current_active_user')
+    def test_get_learner_by_id_other_profile(self, mock_current_user, client, sample_learner_profile):
+        """Test getting another learner's profile (should be forbidden)"""
+        mock_current_user.return_value = sample_learner_profile
+        
+        other_id = "507f1f77bcf86cd799439011"  # Different ID
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.get(f"/api/v1/learners/{other_id}", headers=headers)
+        
+        assert response.status_code == 403
+        assert "Access denied" in response.json()["detail"]
+    
+    @patch('src.api.auth.get_current_active_user')
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.delete_learner_profile')
+    def test_delete_profile_success(self, mock_delete, mock_collection, mock_current_user, client, sample_learner_profile):
+        """Test successful profile deletion"""
+        mock_current_user.return_value = sample_learner_profile
+        mock_collection.return_value = AsyncMock()
+        mock_delete.return_value = True
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.delete("/api/v1/learners/me", headers=headers)
+        
+        assert response.status_code == 204
+    
+    @patch('src.api.auth.get_current_active_user')
+    @patch('src.db.database.get_learner_collection')
+    @patch('src.db.learner_repository.LearnerRepository.delete_learner_profile')
+    def test_delete_profile_not_found(self, mock_delete, mock_collection, mock_current_user, client, sample_learner_profile):
+        """Test profile deletion when profile not found"""
+        mock_current_user.return_value = sample_learner_profile
+        mock_collection.return_value = AsyncMock()
+        mock_delete.return_value = False
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.delete("/api/v1/learners/me", headers=headers)
+        
+        assert response.status_code == 404
+    
+    @patch('src.api.auth.get_current_active_user')
+    def test_search_learners_forbidden(self, mock_current_user, client, sample_learner_profile):
+        """Test searching learners (should be forbidden for regular users)"""
+        mock_current_user.return_value = sample_learner_profile
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.get("/api/v1/learners", headers=headers)
+        
+        assert response.status_code == 403
+        assert "Insufficient privileges" in response.json()["detail"]
+    
+    @patch('src.api.auth.get_current_active_user')
+    def test_get_profile_completion_stats(self, mock_current_user, client, sample_learner_profile):
+        """Test getting profile completion statistics"""
+        mock_current_user.return_value = sample_learner_profile
+        
+        headers = {"Authorization": "Bearer fake-token"}
+        response = client.get("/api/v1/learners/stats/completion", headers=headers)
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "completion_percentage" in data
+        assert "is_complete" in data
+        assert "missing_fields" in data
+        assert "suggestions" in data
+        assert data["completion_percentage"] == 85.0
+    
+    def test_health_check(self, client):
+        """Test health check endpoint"""
+        with patch('src.db.database.db.database.command') as mock_command:
+            mock_command.return_value = {"ok": 1}
+            
+            response = client.get("/health")
+            
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "healthy"
+            assert data["service"] == "Adaptive Learning System"
+    
+    def test_root_endpoint(self, client):
+        """Test root endpoint"""
+        response = client.get("/")
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "message" in data
+        assert "version" in data
+        assert data["version"] == "1.0.0"

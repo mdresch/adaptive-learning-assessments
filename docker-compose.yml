@@ -1,30 +1,53 @@
 version: '3.8'
 
 services:
-  api:
+  app:
     build: .
     ports:
       - "8000:8000"
     environment:
-      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017}
-      - MONGODB_DATABASE=${MONGODB_DATABASE:-adaptive_learning}
+      - MONGODB_URI=${MONGODB_URI}
+      - DATABASE_NAME=${DATABASE_NAME:-adaptive_learning_system}
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
       - HOST=0.0.0.0
       - PORT=8000
+    volumes:
+      - .:/app
     depends_on:
       - mongodb
-    volumes:
-      - ./src:/app/src
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   mongodb:
     image: mongo:7.0
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_DATABASE=adaptive_learning
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-password}
+      - MONGO_INITDB_DATABASE=${DATABASE_NAME:-adaptive_learning_system}
     volumes:
       - mongodb_data:/data/db
       - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    restart: unless-stopped
+
+  mongodb-express:
+    image: mongo-express:1.0.0
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_ROOT_PASSWORD:-password}
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN:-admin}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD:-pass}
+    depends_on:
+      - mongodb
     restart: unless-stopped
 
 volumes:
