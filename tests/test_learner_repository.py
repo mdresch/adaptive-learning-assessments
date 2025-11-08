@@ -6,10 +6,7 @@ CRUD operations, authentication, and data integrity.
 """
 
 import pytest
-import asyncio
-from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo.errors import DuplicateKeyError
 
 from src.db.learner_repository import LearnerRepository
 from src.models.learner_profile import (

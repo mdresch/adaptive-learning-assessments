@@ -146,7 +146,7 @@ def test_password_validation():
     
     # Valid password
     try:
-        profile = LearnerProfileCreate(**base_data, password="SecurePass123")
+        LearnerProfileCreate(**base_data, password="SecurePass123")
         print("✓ Valid password accepted")
     except Exception as e:
         print(f"❌ Valid password rejected: {e}")

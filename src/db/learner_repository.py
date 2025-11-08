@@ -187,8 +187,9 @@ class LearnerRepository:
             if "experience_level" in filters:
                 query["programming_experience.overall_experience"] = filters["experience_level"]
             if "search_text" in filters:
-                # Text search in name and email
-                search_text = filters["search_text"]
+                # Text search in name and email - escape regex special characters
+                import re
+                search_text = re.escape(filters["search_text"])
                 query["$or"] = [
                     {"first_name": {"$regex": search_text, "$options": "i"}},
                     {"last_name": {"$regex": search_text, "$options": "i"}},

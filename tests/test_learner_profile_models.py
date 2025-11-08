@@ -6,13 +6,11 @@ validation, serialization, and data integrity.
 """
 
 import pytest
-from datetime import datetime
 from pydantic import ValidationError
 
 from src.models.learner_profile import (
     LearnerProfileCreate,
     LearnerProfileUpdate,
-    LearnerProfile,
     Demographics,
     LearningPreferences,
     ProgrammingExperience,

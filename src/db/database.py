@@ -27,7 +27,14 @@ class Database:
             if not mongodb_uri:
                 raise ValueError("MONGODB_URI environment variable is not set")
             
-            self.client = AsyncIOMotorClient(mongodb_uri)
+            self.client = AsyncIOMotorClient(
+                mongodb_uri,
+                serverSelectionTimeoutMS=5000,  # 5 second timeout
+                connectTimeoutMS=10000,         # 10 second connection timeout
+                socketTimeoutMS=20000,          # 20 second socket timeout
+                maxPoolSize=10,                 # Connection pool size
+                retryWrites=True                # Enable retryable writes
+            )
             
             # Test the connection
             await self.client.admin.command('ping')

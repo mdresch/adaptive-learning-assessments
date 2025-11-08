@@ -313,5 +313,5 @@ async def get_profile_completion_stats(
         "missing_fields": missing_fields,
         "suggestions": suggestions,
         "total_fields": 8,
-        "completed_fields": len([f for f in missing_fields if f not in missing_fields])
+        "completed_fields": 8 - len(missing_fields)
     }

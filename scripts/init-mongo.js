@@ -29,7 +29,7 @@ if (db.learner_profiles.countDocuments() === 0) {
         first_name: "Demo",
         last_name: "User",
         username: "demouser",
-        hashed_password: "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3QJgusgqHu", // "password123"
+        hashed_password: "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3QJgusgqHu",
         demographics: {
             age: 25,
             education_level: "bachelor",
