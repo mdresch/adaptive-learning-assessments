@@ -15,7 +15,9 @@ from dotenv import load_dotenv
 
 from .db.database import db
 from .db.learner_repository import LearnerRepository
+from .db.template_analytics_repository import TemplateAnalyticsRepository
 from .api.learner_profile_routes import router as learner_router
+from .api.template_analytics_routes import router as template_analytics_router
 
 # Load environment variables
 load_dotenv()
@@ -38,12 +40,18 @@ async def lifespan(app: FastAPI):
         # Connect to database
         await db.connect_to_mongo()
         
-        # Create indexes
-        collection = await db.get_collection("learner_profiles")
-        repository = LearnerRepository(collection)
-        await repository.create_indexes()
+        # Create indexes for learner profiles
+        learner_collection = await db.get_collection("learner_profiles")
+        learner_repository = LearnerRepository(learner_collection)
+        await learner_repository.create_indexes()
         
-        logger.info("Database connected and indexes created")
+        # Create indexes for template analytics
+        template_collection = await db.get_collection("template_entity_profiles")
+        domain_collection = await db.get_collection("document_domain_inferences")
+        template_analytics_repository = TemplateAnalyticsRepository(template_collection, domain_collection)
+        await template_analytics_repository.create_indexes()
+        
+        logger.info("Database connected and all indexes created")
         
     except Exception as e:
         logger.error(f"Failed to initialize application: {e}")
@@ -119,6 +127,7 @@ async def root():
 
 # Include routers
 app.include_router(learner_router)
+app.include_router(template_analytics_router)
 
 
 if __name__ == "__main__":

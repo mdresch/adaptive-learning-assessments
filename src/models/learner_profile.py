@@ -26,8 +26,9 @@ class PyObjectId(ObjectId):
         return ObjectId(v)
 
     @classmethod
-    def __modify_schema__(cls, field_schema):
+    def __get_pydantic_json_schema__(cls, field_schema):
         field_schema.update(type="string")
+        return field_schema
 
 
 class EducationLevel(str, Enum):
@@ -175,10 +176,10 @@ class LearnerProfile(LearnerProfileBase):
     profile_completion_percentage: float = Field(0.0, ge=0.0, le=100.0, description="Profile completion percentage")
     
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "learner@example.com",
                 "first_name": "John",
@@ -231,7 +232,7 @@ class LearnerProfileResponse(BaseModel):
     profile_completion_percentage: float
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": "507f1f77bcf86cd799439011",
                 "email": "learner@example.com",

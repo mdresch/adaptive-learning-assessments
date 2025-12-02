@@ -1,8 +1,8 @@
-# Learner Profile Management API Documentation
+# Adaptive Learning System API Documentation
 
 ## Overview
 
-The Learner Profile Management API provides comprehensive functionality for managing learner profiles in the Adaptive Learning System. This API supports user registration, authentication, profile management, and personalization features.
+The Adaptive Learning System API provides comprehensive functionality for managing learner profiles and template analytics in the Adaptive Learning System. This API supports user registration, authentication, profile management, template analytics, and document domain inference features.
 
 ## Base URL
 
@@ -377,6 +377,131 @@ Search endpoints support pagination with `skip` and `limit` parameters:
 
 - `skip`: Number of records to skip (default: 0)
 - `limit`: Maximum records to return (default: 20, max: 100)
+
+## Template Analytics Endpoints
+
+### 8. Create Template Profile
+
+**POST** `/template-analytics/templates`
+
+Creates a new template entity profile for tracking template usage and effectiveness.
+
+#### Request Body
+
+```json
+{
+  "template_id": "python_basics_quiz_001",
+  "template_name": "Python Basics Quiz",
+  "template_type": "quiz",
+  "description": "A comprehensive quiz covering Python fundamentals",
+  "domain_associations": [
+    {
+      "domain": "programming",
+      "confidence": 0.95,
+      "evidence_count": 10
+    }
+  ],
+  "tags": ["python", "basics", "programming"],
+  "metadata": {
+    "difficulty": "beginner",
+    "estimated_time": 20
+  }
+}
+```
+
+### 9. Infer Document Domain
+
+**POST** `/template-analytics/documents/infer-domain`
+
+Automatically infers the domain for a document using content analysis.
+
+#### Request Body
+
+```json
+{
+  "document_id": "doc_001",
+  "document_type": "lesson",
+  "content": "def fibonacci(n): if n <= 1: return n...",
+  "metadata": {
+    "title": "Fibonacci Algorithm",
+    "tags": ["python", "algorithms"],
+    "file_extension": ".py"
+  }
+}
+```
+
+### 10. Get Template Analytics
+
+**GET** `/template-analytics/analytics/templates`
+
+Retrieves comprehensive template analytics and aggregations.
+
+#### Query Parameters
+
+- `days_back`: Number of days to look back (default: 30)
+
+#### Response
+
+```json
+{
+  "total_templates": 25,
+  "active_templates": 23,
+  "templates_by_type": {
+    "quiz": 10,
+    "exercise": 8,
+    "lesson": 5,
+    "assessment": 2
+  },
+  "templates_by_domain": {
+    "programming": 12,
+    "data_structures": 6,
+    "web_development": 4,
+    "database": 3
+  },
+  "average_effectiveness": 0.78,
+  "top_performing_templates": [
+    {
+      "template_id": "html_css_basics_001",
+      "template_name": "HTML & CSS Fundamentals",
+      "effectiveness_score": 0.91,
+      "total_uses": 312
+    }
+  ],
+  "usage_trends": {}
+}
+```
+
+### 11. Get Domain Analytics
+
+**GET** `/template-analytics/analytics/domains`
+
+Retrieves comprehensive domain analytics and aggregations.
+
+## Domain Categories
+
+The system supports the following domain categories:
+
+- `programming`: General programming concepts
+- `data_structures`: Data structure topics
+- `algorithms`: Algorithm concepts and analysis
+- `mathematics`: Mathematical concepts
+- `computer_science`: Theoretical computer science
+- `software_engineering`: Software engineering practices
+- `web_development`: Web development technologies
+- `database`: Database concepts and SQL
+- `machine_learning`: Machine learning and AI
+- `cybersecurity`: Security and cryptography
+- `other`: Miscellaneous topics
+
+## Template Types
+
+- `quiz`: Interactive quizzes
+- `exercise`: Hands-on exercises
+- `lesson`: Educational lessons
+- `assessment`: Formal assessments
+- `interactive`: Interactive content
+- `video`: Video content
+- `reading`: Reading materials
 
 ## Health Check
 
